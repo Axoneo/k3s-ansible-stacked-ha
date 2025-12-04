@@ -8,11 +8,28 @@
     - role: airgap
     - role: raspberrypi
 
-- name: Setup K3S server
-  hosts: server
+- name: Setup K3S server (First Node)
+  hosts: server[0]
   become: true
   roles:
     - role: k3s_server
+    - role: kube_vip
+  post_tasks:
+    - name: Wait for kube-vip VIP to be ready
+      ansible.builtin.wait_for:
+        host: "{{ kube_vip_address | default('127.0.0.1') }}"
+        port: 6443
+        state: started
+        timeout: 300
+      delegate_to: localhost
+      when: kube_vip_enabled | default(false)
+
+- name: Setup K3S server (Rest of Nodes)
+  hosts: server[1:]
+  become: true
+  roles:
+    - role: k3s_server
+    - role: kube_vip
 
 - name: Setup K3S agent
   hosts: agent

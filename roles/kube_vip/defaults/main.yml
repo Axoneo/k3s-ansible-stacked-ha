@@ -4,4 +4,4 @@ kube_vip_version: "v0.8.0"
 kube_vip_image: "ghcr.io/kube-vip/kube-vip:{{ kube_vip_version }}"
 kube_vip_interface: "eth0"
 # kube_vip_address: "192.168.0.100" # Must be defined by user
-kube_vip_manifest_dir: "/var/lib/rancher/k3s/server/manifests"
+kube_vip_manifest_dir: "/var/lib/rancher/k3s/agent/pod-manifests"
