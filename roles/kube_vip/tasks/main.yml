@@ -1,0 +1,25 @@
+---
+- name: Check if kube_vip_address is defined
+  ansible.builtin.fail:
+    msg: "kube_vip_address must be defined when kube_vip_enabled is true"
+  when:
+    - kube_vip_enabled
+    - kube_vip_address is not defined
+
+- name: Create manifests directory
+  ansible.builtin.file:
+    path: "{{ kube_vip_manifest_dir }}"
+    state: directory
+    mode: "0755"
+    owner: root
+    group: root
+  when: kube_vip_enabled
+
+- name: Deploy kube-vip manifest
+  ansible.builtin.template:
+    src: kube-vip.yaml.j2
+    dest: "{{ kube_vip_manifest_dir }}/kube-vip.yaml"
+    mode: "0644"
+    owner: root
+    group: root
+  when: kube_vip_enabled
