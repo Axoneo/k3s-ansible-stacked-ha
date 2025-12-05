@@ -17,6 +17,15 @@
     name: kernel-modules-extra   # Load br_netfilter module
     update_cache: "{{ airgap_dir is not defined }}"
 
+- name: Check if swap is disabled
+  ansible.builtin.command: swapon --show=NAME --noheadings
+  register: swap_check
+  changed_when: false
+
+- name: Disable swap
+  ansible.builtin.command: swapoff -a
+  when: swap_check.stdout != ""
+
 - name: Enable IPv4 forwarding
   ansible.posix.sysctl:
     name: net.ipv4.ip_forward
